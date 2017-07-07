@@ -21,6 +21,17 @@ const ContactForm= (props) => (
             value={props.phone} 
             onChange={props.handlePhoneChange}
         />
+        
+        <div>
+            <button className="btn btn-primary" onClick={() => props.saveContact({
+                firstName: props.firstName,
+                lastName: props.lastName,
+                phone: props.phone
+                })}
+                >
+                Guardar
+                </button>
+        </div>
     </div>
 );
 

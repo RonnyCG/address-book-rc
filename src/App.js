@@ -1,21 +1,30 @@
 import React, { Component } from 'react';
 
+import axios from 'axios';
+
 import Header from './components/Header'; //importo mi componente
 import Footer from './components/Footer'; //importo mi componente
 import SearchBox from './components/SearchBox'; //importo mi componente
 import ContactForm from './components/ContactForm'; //importo mi componente
+import ContactList from './components/ContactList';
 
-
+const API_URL = 'https://address-book-api-kfpkaqtghu.now.sh';
 class App extends Component {
   constructor(props){
     super(props);
     this.state = {
+      contacts: [],
       searchText:'',
       firstName: '',
       lastName: '',
       phone:'',
     };
-    
+
+   
+  }
+  
+  componentDidMount(){
+    this.getContacts();
   }
 
   handleSearchTextChange = (event) =>{
@@ -42,8 +51,57 @@ class App extends Component {
     });
   }
 
+  getContacts = () => {
+    axios({
+          method: 'GET',
+          url: API_URL + '/api/contacts',
+          headers: {
+            'Api-Key':'1723980429',
+          }
+        })
+        .then((response)=>{
+          console.log(response);
+          this.setState({ contacts: response.data.data})
+        })
+        .catch((error)=>{
+          console.log(error);
+        })
+      }
+
+      saveContact = (contact) =>{
+        axios({
+          method: 'POST',
+          url: API_URL + '/api/contacts',
+          headers: {
+            'Api-Key':'1723980429',  
+            'Content-Type':'application/json'
+            
+          },
+          data: {
+            firstName: contact.firstName,
+            lastName: contact.lastName,
+            phone: contact.phone,
+          }
+        })
+        .then((response)=>{
+          console.log(response);
+          this.getContacts();
+          this.setState({ contacts: response.data.data})
+        })
+        .catch((error)=>{
+          console.log(error);
+        })
+  }
 
   render() {
+    const contacts = this.state.contacts.filter((contact, 
+    index) =>{
+
+      if(contact.firstName.indexOf(this.state.searchText) > -1){
+        return true
+      }
+      return false;
+    });
     return (//se renderiza el cmponente aqui
       <div>
         <Header title="Address Book" /> 
@@ -53,6 +111,9 @@ class App extends Component {
               <SearchBox 
                 value={this.state.searchText}
                 onChange={this.handleSearchTextChange} //se pasa una declaracion de funcion, x eso no se usa (), xq seria llamar la funcion
+              />
+              <ContactList 
+                contacts={contacts}
               />
             </div>
             <div className="col-md-6">
@@ -67,6 +128,8 @@ class App extends Component {
 
                 phone={this.state.phone}
                 handlePhoneChange={this.handlePhoneChange}
+
+                saveContact={this.saveContact}
               />
             </div>
           </div>

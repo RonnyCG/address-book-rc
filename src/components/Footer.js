@@ -1,9 +1,9 @@
 import React from 'react';
 const FooterC = (props) => ( //cuando es un componente funcional se agregan los props como argumentos de la funcion
 
-     <h2 className="text-center">
+     <p className="text-center">
          {props.copyright}
-     </h2>
+     </p>
  
  );  
 
